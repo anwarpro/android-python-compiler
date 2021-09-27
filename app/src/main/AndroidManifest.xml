@@ -23,7 +23,7 @@
             android:value="true" />
 
         <activity
-            android:name=".app.TermuxActivity"
+            android:name=".app.TerminalActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -31,7 +31,7 @@
             </intent-filter>
         </activity>
         <service
-            android:name=".app.TermuxService"
+            android:name=".app.TerminalService"
             android:exported="false" />
     </application>
 

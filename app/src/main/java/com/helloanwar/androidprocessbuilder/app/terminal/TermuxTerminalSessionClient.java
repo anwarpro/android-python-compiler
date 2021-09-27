@@ -10,11 +10,10 @@ import android.graphics.Typeface;
 import android.media.AudioAttributes;
 import android.media.SoundPool;
 import android.text.TextUtils;
-import android.widget.ListView;
 
 import com.helloanwar.androidprocessbuilder.R;
-import com.helloanwar.androidprocessbuilder.app.TermuxActivity;
-import com.helloanwar.androidprocessbuilder.app.TermuxService;
+import com.helloanwar.androidprocessbuilder.app.TerminalActivity;
+import com.helloanwar.androidprocessbuilder.app.TerminalService;
 import com.helloanwar.androidprocessbuilder.app.terminal.io.BellHandler;
 import com.termux.shared.interact.TextInputDialogUtils;
 import com.termux.shared.logger.Logger;
@@ -33,7 +32,7 @@ import java.util.Properties;
 
 public class TermuxTerminalSessionClient extends TermuxTerminalSessionClientBase {
 
-    private final TermuxActivity mActivity;
+    private final TerminalActivity mActivity;
 
     private static final int MAX_SESSIONS = 8;
 
@@ -43,7 +42,7 @@ public class TermuxTerminalSessionClient extends TermuxTerminalSessionClientBase
 
     private static final String LOG_TAG = "TermuxTerminalSessionClient";
 
-    public TermuxTerminalSessionClient(TermuxActivity activity) {
+    public TermuxTerminalSessionClient(TerminalActivity activity) {
         this.mActivity = activity;
     }
 
@@ -130,7 +129,7 @@ public class TermuxTerminalSessionClient extends TermuxTerminalSessionClientBase
 
     @Override
     public void onSessionFinished(final TerminalSession finishedSession) {
-        TermuxService service = mActivity.getTermuxService();
+        TerminalService service = mActivity.getTermuxService();
 
         if (service == null || service.wantsToStop()) {
             // The service wants to stop as soon as possible.
@@ -287,7 +286,7 @@ public class TermuxTerminalSessionClient extends TermuxTerminalSessionClientBase
     }
 
     public void switchToSession(boolean forward) {
-        TermuxService service = mActivity.getTermuxService();
+        TerminalService service = mActivity.getTermuxService();
         if (service == null) return;
 
         TerminalSession currentTerminalSession = mActivity.getCurrentSession();
@@ -305,7 +304,7 @@ public class TermuxTerminalSessionClient extends TermuxTerminalSessionClientBase
     }
 
     public void switchToSession(int index) {
-        TermuxService service = mActivity.getTermuxService();
+        TerminalService service = mActivity.getTermuxService();
         if (service == null) return;
 
         TermuxSession termuxSession = service.getTermuxSession(index);
@@ -324,7 +323,7 @@ public class TermuxTerminalSessionClient extends TermuxTerminalSessionClientBase
     }
 
     public void addNewSession(boolean isFailSafe, String sessionName) {
-        TermuxService service = mActivity.getTermuxService();
+        TerminalService service = mActivity.getTermuxService();
         if (service == null) return;
 
         if (service.getTermuxSessionsSize() >= MAX_SESSIONS) {
@@ -345,8 +344,6 @@ public class TermuxTerminalSessionClient extends TermuxTerminalSessionClientBase
 
             TerminalSession newTerminalSession = newTermuxSession.getTerminalSession();
             setCurrentSession(newTerminalSession);
-
-            mActivity.getDrawer().closeDrawers();
         }
     }
 
@@ -369,7 +366,7 @@ public class TermuxTerminalSessionClient extends TermuxTerminalSessionClientBase
             return stored;
         } else {
             // Else return the last session currently running
-            TermuxService service = mActivity.getTermuxService();
+            TerminalService service = mActivity.getTermuxService();
             if (service == null) return null;
 
             TermuxSession termuxSession = service.getLastTermuxSession();
@@ -388,7 +385,7 @@ public class TermuxTerminalSessionClient extends TermuxTerminalSessionClientBase
             return null;
 
         // Check if the session handle found matches one of the currently running sessions
-        TermuxService service = mActivity.getTermuxService();
+        TerminalService service = mActivity.getTermuxService();
         if (service == null) return null;
 
         return service.getTerminalSessionForHandle(sessionHandle);
@@ -396,7 +393,7 @@ public class TermuxTerminalSessionClient extends TermuxTerminalSessionClientBase
 
     public void removeFinishedSession(TerminalSession finishedSession) {
         // Return pressed with finished session - remove it.
-        TermuxService service = mActivity.getTermuxService();
+        TerminalService service = mActivity.getTermuxService();
         if (service == null) return;
 
         int index = service.removeTermuxSession(finishedSession);
@@ -421,22 +418,22 @@ public class TermuxTerminalSessionClient extends TermuxTerminalSessionClientBase
 
     public void checkAndScrollToSession(TerminalSession session) {
         if (!mActivity.isVisible()) return;
-        TermuxService service = mActivity.getTermuxService();
+        TerminalService service = mActivity.getTermuxService();
         if (service == null) return;
 
         final int indexOfSession = service.getIndexOfSession(session);
         if (indexOfSession < 0) return;
-        final ListView termuxSessionsListView = mActivity.findViewById(R.id.terminal_sessions_list);
+     /*   final ListView termuxSessionsListView = mActivity.findViewById(R.id.terminal_sessions_list);
         if (termuxSessionsListView == null) return;
 
         termuxSessionsListView.setItemChecked(indexOfSession, true);
         // Delay is necessary otherwise sometimes scroll to newly added session does not happen
-        termuxSessionsListView.postDelayed(() -> termuxSessionsListView.smoothScrollToPosition(indexOfSession), 1000);
+        termuxSessionsListView.postDelayed(() -> termuxSessionsListView.smoothScrollToPosition(indexOfSession), 1000);*/
     }
 
 
     String toToastTitle(TerminalSession session) {
-        TermuxService service = mActivity.getTermuxService();
+        TerminalService service = mActivity.getTermuxService();
         if (service == null) return null;
 
         final int indexOfSession = service.getIndexOfSession(session);

@@ -11,7 +11,6 @@ import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Environment;
 import android.text.TextUtils;
-import android.view.Gravity;
 import android.view.InputDevice;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -20,10 +19,8 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import androidx.drawerlayout.widget.DrawerLayout;
-
 import com.helloanwar.androidprocessbuilder.R;
-import com.helloanwar.androidprocessbuilder.app.TermuxActivity;
+import com.helloanwar.androidprocessbuilder.app.TerminalActivity;
 import com.helloanwar.androidprocessbuilder.app.models.UserAction;
 import com.helloanwar.androidprocessbuilder.app.terminal.io.KeyboardShortcut;
 import com.termux.shared.activities.ReportActivity;
@@ -54,7 +51,7 @@ import java.util.List;
 
 public class TermuxTerminalViewClient extends TermuxTerminalViewClientBase {
 
-    final TermuxActivity mActivity;
+    final TerminalActivity mActivity;
 
     final TermuxTerminalSessionClient mTermuxTerminalSessionClient;
 
@@ -72,12 +69,12 @@ public class TermuxTerminalViewClient extends TermuxTerminalViewClientBase {
 
     private static final String LOG_TAG = "TermuxTerminalViewClient";
 
-    public TermuxTerminalViewClient(TermuxActivity activity, TermuxTerminalSessionClient termuxTerminalSessionClient) {
+    public TermuxTerminalViewClient(TerminalActivity activity, TermuxTerminalSessionClient termuxTerminalSessionClient) {
         this.mActivity = activity;
         this.mTermuxTerminalSessionClient = termuxTerminalSessionClient;
     }
 
-    public TermuxActivity getActivity() {
+    public TerminalActivity getActivity() {
         return mActivity;
     }
 
@@ -202,7 +199,7 @@ public class TermuxTerminalViewClient extends TermuxTerminalViewClientBase {
     @Override
     public void copyModeChanged(boolean copyMode) {
         // Disable drawer while copying.
-        mActivity.getDrawer().setDrawerLockMode(copyMode ? DrawerLayout.LOCK_MODE_LOCKED_CLOSED : DrawerLayout.LOCK_MODE_UNLOCKED);
+//        mActivity.getDrawer().setDrawerLockMode(copyMode ? DrawerLayout.LOCK_MODE_LOCKED_CLOSED : DrawerLayout.LOCK_MODE_UNLOCKED);
     }
 
 
@@ -224,9 +221,9 @@ public class TermuxTerminalViewClient extends TermuxTerminalViewClientBase {
             } else if (keyCode == KeyEvent.KEYCODE_DPAD_UP || unicodeChar == 'p' /* previous */) {
                 mTermuxTerminalSessionClient.switchToSession(false);
             } else if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
-                mActivity.getDrawer().openDrawer(Gravity.LEFT);
+//                mActivity.getDrawer().openDrawer(Gravity.LEFT);
             } else if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
-                mActivity.getDrawer().closeDrawers();
+//                mActivity.getDrawer().closeDrawers();
             } else if (unicodeChar == 'k'/* keyboard */) {
                 onToggleSoftKeyboardRequest();
             } else if (unicodeChar == 'm'/* menu */) {

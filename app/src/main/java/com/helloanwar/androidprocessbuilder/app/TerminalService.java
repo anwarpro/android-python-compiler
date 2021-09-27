@@ -58,7 +58,7 @@ import java.util.List;
  * Optionally may hold a wake and a wifi lock, in which case that is shown in the notification - see
  * {@link #buildNotification()}.
  */
-public final class TermuxService extends Service implements TermuxTask.TermuxTaskClient, TermuxSession.TermuxSessionClient {
+public final class TerminalService extends Service implements TermuxTask.TermuxTaskClient, TermuxSession.TermuxSessionClient {
 
     private static int EXECUTION_ID = 1000;
 
@@ -66,7 +66,7 @@ public final class TermuxService extends Service implements TermuxTask.TermuxTas
      * This service is only bound from inside the same process and never uses IPC.
      */
     class LocalBinder extends Binder {
-        public final TermuxService service = TermuxService.this;
+        public final TerminalService service = TerminalService.this;
     }
 
     private final IBinder mBinder = new LocalBinder();
@@ -315,16 +315,18 @@ public final class TermuxService extends Service implements TermuxTask.TermuxTas
         mWifiLock.acquire();
 
         String packageName = getPackageName();
-        if (!pm.isIgnoringBatteryOptimizations(packageName)) {
-            Intent whitelist = new Intent();
-            whitelist.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
-            whitelist.setData(Uri.parse("package:" + packageName));
-            whitelist.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (!pm.isIgnoringBatteryOptimizations(packageName)) {
+                Intent whitelist = new Intent();
+                whitelist.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+                whitelist.setData(Uri.parse("package:" + packageName));
+                whitelist.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-            try {
-                startActivity(whitelist);
-            } catch (ActivityNotFoundException e) {
-                Logger.logStackTraceWithMessage(LOG_TAG, "Failed to call ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS", e);
+                try {
+                    startActivity(whitelist);
+                } catch (ActivityNotFoundException e) {
+                    Logger.logStackTraceWithMessage(LOG_TAG, "Failed to call ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS", e);
+                }
             }
         }
 
@@ -572,7 +574,7 @@ public final class TermuxService extends Service implements TermuxTask.TermuxTas
             mTermuxTerminalSessionClient.termuxSessionListNotifyUpdated();
 
         updateNotification();
-        TermuxActivity.updateTermuxActivityStyling(this);
+        TerminalActivity.updateTermuxActivityStyling(this);
 
         return newTermuxSession;
     }
@@ -672,7 +674,7 @@ public final class TermuxService extends Service implements TermuxTask.TermuxTas
         // from background (services). If it is not granted, then TermuxSessions that are started will
         // show in Termux notification but will not run until user manually clicks the notification.
 
-        TermuxActivity.startTermuxActivity(this);
+        TerminalActivity.startTermuxActivity(this);
 
        /* if (PermissionUtils.validateDisplayOverOtherAppsPermissionForPostAndroid10(this, true)) {
             TermuxActivity.startTermuxActivity(this);
@@ -686,7 +688,7 @@ public final class TermuxService extends Service implements TermuxTask.TermuxTas
 
 
     /**
-     * {@link TermuxService}, otherwise {@link TermuxTerminalSessionClientBase}.
+     * {@link TerminalService}, otherwise {@link TermuxTerminalSessionClientBase}.
      */
     public synchronized TermuxTerminalSessionClientBase getTermuxTerminalSessionClient() {
         if (mTermuxTerminalSessionClient != null)
@@ -696,7 +698,7 @@ public final class TermuxService extends Service implements TermuxTask.TermuxTas
     }
 
     /**
-     * {@link TermuxService#mTermuxTerminalSessionClient} variable and update the {@link TerminalSession}
+     * {@link TerminalService#mTermuxTerminalSessionClient} variable and update the {@link TerminalSession}
      * and {@link TerminalEmulator} clients in case they were passed {@link TermuxTerminalSessionClientBase}
      * earlier.
      *
@@ -711,7 +713,7 @@ public final class TermuxService extends Service implements TermuxTask.TermuxTas
     }
 
     /**
-     * so that the {@link TermuxService} and {@link TerminalSession} and {@link TerminalEmulator}
+     * so that the {@link TerminalService} and {@link TerminalSession} and {@link TerminalEmulator}
      * clients do not hold an activity references.
      */
     public synchronized void unsetTermuxTerminalSessionClient() {
@@ -726,7 +728,7 @@ public final class TermuxService extends Service implements TermuxTask.TermuxTas
         Resources res = getResources();
 
         // Set pending intent to be launched when notification is clicked
-        Intent notificationIntent = TermuxActivity.newInstance(this);
+        Intent notificationIntent = TerminalActivity.newInstance(this);
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
 
 
@@ -769,13 +771,13 @@ public final class TermuxService extends Service implements TermuxTask.TermuxTas
 
 
         // Set Exit button action
-        Intent exitIntent = new Intent(this, TermuxService.class).setAction(TERMUX_SERVICE.ACTION_STOP_SERVICE);
+        Intent exitIntent = new Intent(this, TerminalService.class).setAction(TERMUX_SERVICE.ACTION_STOP_SERVICE);
         builder.addAction(android.R.drawable.ic_delete, res.getString(R.string.notification_action_exit), PendingIntent.getService(this, 0, exitIntent, 0));
 
 
         // Set Wakelock button actions
         String newWakeAction = wakeLockHeld ? TERMUX_SERVICE.ACTION_WAKE_UNLOCK : TERMUX_SERVICE.ACTION_WAKE_LOCK;
-        Intent toggleWakeLockIntent = new Intent(this, TermuxService.class).setAction(newWakeAction);
+        Intent toggleWakeLockIntent = new Intent(this, TerminalService.class).setAction(newWakeAction);
         String actionTitle = res.getString(wakeLockHeld ? R.string.notification_action_wake_unlock : R.string.notification_action_wake_lock);
         int actionIcon = wakeLockHeld ? android.R.drawable.ic_lock_idle_lock : android.R.drawable.ic_lock_lock;
         builder.addAction(actionIcon, actionTitle, PendingIntent.getService(this, 0, toggleWakeLockIntent, 0));

@@ -19,7 +19,7 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 
 import com.helloanwar.androidprocessbuilder.R;
-import com.helloanwar.androidprocessbuilder.app.TermuxActivity;
+import com.helloanwar.androidprocessbuilder.app.TerminalActivity;
 import com.termux.shared.shell.TermuxSession;
 import com.termux.terminal.TerminalSession;
 
@@ -27,12 +27,12 @@ import java.util.List;
 
 public class TermuxSessionsListViewController extends ArrayAdapter<TermuxSession> implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
 
-    final TermuxActivity mActivity;
+    final TerminalActivity mActivity;
 
     final StyleSpan boldSpan = new StyleSpan(Typeface.BOLD);
     final StyleSpan italicSpan = new StyleSpan(Typeface.ITALIC);
 
-    public TermuxSessionsListViewController(TermuxActivity activity, List<TermuxSession> sessionList) {
+    public TermuxSessionsListViewController(TerminalActivity activity, List<TermuxSession> sessionList) {
         super(activity.getApplicationContext(), R.layout.item_terminal_sessions_list, sessionList);
         this.mActivity = activity;
     }
@@ -94,7 +94,7 @@ public class TermuxSessionsListViewController extends ArrayAdapter<TermuxSession
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         TermuxSession clickedSession = getItem(position);
         mActivity.getTermuxTerminalSessionClient().setCurrentSession(clickedSession.getTerminalSession());
-        mActivity.getDrawer().closeDrawers();
+//        mActivity.getDrawer().closeDrawers();
     }
 
     @Override

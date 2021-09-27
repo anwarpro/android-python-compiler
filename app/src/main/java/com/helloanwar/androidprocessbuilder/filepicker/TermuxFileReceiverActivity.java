@@ -8,7 +8,7 @@ import android.provider.OpenableColumns;
 import android.util.Patterns;
 
 import com.helloanwar.androidprocessbuilder.R;
-import com.helloanwar.androidprocessbuilder.app.TermuxService;
+import com.helloanwar.androidprocessbuilder.app.TerminalService;
 import com.termux.shared.data.DataUtils;
 import com.termux.shared.data.IntentUtils;
 import com.termux.shared.interact.MessageDialogUtils;
@@ -162,7 +162,7 @@ public class TermuxFileReceiverActivity extends Activity {
                     final Uri scriptUri = new Uri.Builder().scheme("file").path(EDITOR_PROGRAM).build();
 
                     Intent executeIntent = new Intent(TERMUX_SERVICE.ACTION_SERVICE_EXECUTE, scriptUri);
-                    executeIntent.setClass(TermuxFileReceiverActivity.this, TermuxService.class);
+                    executeIntent.setClass(TermuxFileReceiverActivity.this, TerminalService.class);
                     executeIntent.putExtra(TERMUX_SERVICE.EXTRA_ARGUMENTS, new String[]{outFile.getAbsolutePath()});
                     startService(executeIntent);
                     finish();
@@ -172,7 +172,7 @@ public class TermuxFileReceiverActivity extends Activity {
 
                     Intent executeIntent = new Intent(TERMUX_SERVICE.ACTION_SERVICE_EXECUTE);
                     executeIntent.putExtra(TERMUX_SERVICE.EXTRA_WORKDIR, TERMUX_RECEIVEDIR);
-                    executeIntent.setClass(TermuxFileReceiverActivity.this, TermuxService.class);
+                    executeIntent.setClass(TermuxFileReceiverActivity.this, TerminalService.class);
                     startService(executeIntent);
                     finish();
                 },
@@ -226,7 +226,7 @@ public class TermuxFileReceiverActivity extends Activity {
         final Uri urlOpenerProgramUri = new Uri.Builder().scheme("file").path(URL_OPENER_PROGRAM).build();
 
         Intent executeIntent = new Intent(TERMUX_SERVICE.ACTION_SERVICE_EXECUTE, urlOpenerProgramUri);
-        executeIntent.setClass(TermuxFileReceiverActivity.this, TermuxService.class);
+        executeIntent.setClass(TermuxFileReceiverActivity.this, TerminalService.class);
         executeIntent.putExtra(TERMUX_SERVICE.EXTRA_ARGUMENTS, new String[]{url});
         startService(executeIntent);
         finish();

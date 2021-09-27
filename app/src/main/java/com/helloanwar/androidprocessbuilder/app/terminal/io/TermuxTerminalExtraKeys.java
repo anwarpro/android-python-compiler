@@ -1,11 +1,9 @@
 package com.helloanwar.androidprocessbuilder.app.terminal.io;
 
 import android.annotation.SuppressLint;
-import android.view.Gravity;
 import android.view.View;
 
 import androidx.annotation.NonNull;
-import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.helloanwar.androidprocessbuilder.app.terminal.TermuxTerminalSessionClient;
 import com.helloanwar.androidprocessbuilder.app.terminal.TermuxTerminalViewClient;
@@ -33,11 +31,11 @@ public class TermuxTerminalExtraKeys extends TerminalExtraKeys {
             if(mTermuxTerminalViewClient != null)
                 mTermuxTerminalViewClient.onToggleSoftKeyboardRequest();
         } else if ("DRAWER".equals(key)) {
-            DrawerLayout drawerLayout = mTermuxTerminalViewClient.getActivity().getDrawer();
+           /* DrawerLayout drawerLayout = mTermuxTerminalViewClient.getActivity().getDrawer();
             if (drawerLayout.isDrawerOpen(Gravity.LEFT))
                 drawerLayout.closeDrawer(Gravity.LEFT);
             else
-                drawerLayout.openDrawer(Gravity.LEFT);
+                drawerLayout.openDrawer(Gravity.LEFT);*/
         } else if ("PASTE".equals(key)) {
             if(mTermuxTerminalSessionClient != null)
                 mTermuxTerminalSessionClient.onPasteTextFromClipboard(null);
