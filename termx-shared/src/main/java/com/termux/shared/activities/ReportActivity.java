@@ -41,7 +41,7 @@ import io.noties.markwon.recycler.SimpleEntry;
  * and
  * {@code `<receiver android:name="com.termux.shared.activities.ReportActivity$ReportActivityBroadcastReceiver"  android:exported="false" />` }
  * Receiver **must not** be `exported="true"`!!!
- *
+ * <p>
  * Also make an incremental call to {@link #deleteReportInfoFilesOlderThanXDays(Context, int, boolean)}
  * in the app to cleanup cached files.
  */
@@ -107,11 +107,12 @@ public class ReportActivity extends AppCompatActivity {
     private void updateUI() {
 
         if (mBundle == null) {
-            finish(); return;
+            finish();
+            return;
         }
 
         mReportInfo = null;
-        mReportInfoFilePath =null;
+        mReportInfoFilePath = null;
 
         if (mBundle.containsKey(EXTRA_REPORT_INFO_OBJECT_FILE_PATH)) {
             mReportInfoFilePath = mBundle.getString(EXTRA_REPORT_INFO_OBJECT_FILE_PATH);
@@ -119,13 +120,14 @@ public class ReportActivity extends AppCompatActivity {
             if (mReportInfoFilePath != null) {
                 try {
                     FileUtils.ReadSerializableObjectResult result = FileUtils.readSerializableObjectFromFile(ReportInfo.class.getSimpleName(), mReportInfoFilePath, ReportInfo.class, false);
-                    if (result.error != null) {
-                        Logger.logErrorExtended(LOG_TAG, result.error.toString());
-                        Logger.showToast(this, Error.getMinimalErrorString(result.error), true);
-                        finish(); return;
+                    if (result.getError() != null) {
+                        Logger.logErrorExtended(LOG_TAG, result.getError().toString());
+                        Logger.showToast(this, Error.getMinimalErrorString(result.getError()), true);
+                        finish();
+                        return;
                     } else {
-                        if (result.serializableObject != null)
-                            mReportInfo = (ReportInfo) result.serializableObject;
+                        if (result.getSerializableObject() != null)
+                            mReportInfo = (ReportInfo) result.getSerializableObject();
                     }
                 } catch (Exception e) {
                     Logger.logErrorAndShowToast(this, LOG_TAG, e.getMessage());
@@ -137,7 +139,8 @@ public class ReportActivity extends AppCompatActivity {
         }
 
         if (mReportInfo == null) {
-            finish(); return;
+            finish();
+            return;
         }
 
 
@@ -155,8 +158,8 @@ public class ReportActivity extends AppCompatActivity {
         final Markwon markwon = MarkdownUtils.getRecyclerMarkwonBuilder(this);
 
         final MarkwonAdapter adapter = MarkwonAdapter.builderTextViewIsRoot(R.layout.markdown_adapter_node_default)
-            .include(FencedCodeBlock.class, SimpleEntry.create(R.layout.markdown_adapter_node_code_block, R.id.code_text_view))
-            .build();
+                .include(FencedCodeBlock.class, SimpleEntry.create(R.layout.markdown_adapter_node_code_block, R.id.code_text_view))
+                .build();
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
@@ -214,8 +217,8 @@ public class ReportActivity extends AppCompatActivity {
             ShareUtils.copyTextToClipboard(this, ReportInfo.getReportInfoMarkdownString(mReportInfo), null);
         } else if (id == R.id.menu_item_save_report_to_file) {
             ShareUtils.saveTextToFile(this, mReportInfo.reportSaveFileLabel,
-                mReportInfo.reportSaveFilePath, ReportInfo.getReportInfoMarkdownString(mReportInfo),
-                true, REQUEST_GRANT_STORAGE_PERMISSION_FOR_SAVE_FILE);
+                    mReportInfo.reportSaveFilePath, ReportInfo.getReportInfoMarkdownString(mReportInfo),
+                    true, REQUEST_GRANT_STORAGE_PERMISSION_FOR_SAVE_FILE);
         }
 
         return false;
@@ -228,8 +231,8 @@ public class ReportActivity extends AppCompatActivity {
             Logger.logInfo(LOG_TAG, "Storage permission granted by user on request.");
             if (requestCode == REQUEST_GRANT_STORAGE_PERMISSION_FOR_SAVE_FILE) {
                 ShareUtils.saveTextToFile(this, mReportInfo.reportSaveFileLabel,
-                    mReportInfo.reportSaveFilePath, ReportInfo.getReportInfoMarkdownString(mReportInfo),
-                    true, -1);
+                        mReportInfo.reportSaveFilePath, ReportInfo.getReportInfoMarkdownString(mReportInfo),
+                        true, -1);
             }
         } else {
             Logger.logInfo(LOG_TAG, "Storage permission denied by user on request.");
@@ -269,7 +272,7 @@ public class ReportActivity extends AppCompatActivity {
             // This may break markdown formatting
             Logger.logVerbose(LOG_TAG, mReportInfo.reportTitle + " report string total size " + reportStringSize + " is greater than " + ACTIVITY_TEXT_SIZE_LIMIT_IN_BYTES + " and will be truncated");
             mReportActivityMarkdownString = this.getString(R.string.msg_report_truncated) +
-                DataUtils.getTruncatedCommandOutput(reportString.toString(), ACTIVITY_TEXT_SIZE_LIMIT_IN_BYTES, true, false, false);
+                    DataUtils.getTruncatedCommandOutput(reportString.toString(), ACTIVITY_TEXT_SIZE_LIMIT_IN_BYTES, true, false, false);
         } else if (truncated) {
             mReportActivityMarkdownString = this.getString(R.string.msg_report_truncated) + reportString.toString();
         } else {
@@ -279,15 +282,16 @@ public class ReportActivity extends AppCompatActivity {
     }
 
 
-
-
-
     public static class NewInstanceResult {
-        /** An intent that can be used to start the {@link ReportActivity}. */
+        /**
+         * An intent that can be used to start the {@link ReportActivity}.
+         */
         public Intent contentIntent;
-        /** An intent that can should be adding as the {@link android.app.Notification#deleteIntent}
+        /**
+         * An intent that can should be adding as the {@link android.app.Notification#deleteIntent}
          * by a call to {@link android.app.PendingIntent#getBroadcast(Context, int, Intent, int)}
-         * so that {@link ReportActivityBroadcastReceiver} can do cleanup of {@link #EXTRA_REPORT_INFO_OBJECT_FILE_PATH}. */
+         * so that {@link ReportActivityBroadcastReceiver} can do cleanup of {@link #EXTRA_REPORT_INFO_OBJECT_FILE_PATH}.
+         */
         public Intent deleteIntent;
 
         NewInstanceResult(Intent contentIntent, Intent deleteIntent) {
@@ -299,7 +303,7 @@ public class ReportActivity extends AppCompatActivity {
     /**
      * Start the {@link ReportActivity}.
      *
-     * @param context The {@link Context} for operations.
+     * @param context    The {@link Context} for operations.
      * @param reportInfo The {@link ReportInfo} contain info that needs to be displayed.
      */
     public static void startReportActivity(@NonNull final Context context, @NonNull ReportInfo reportInfo) {
@@ -311,7 +315,7 @@ public class ReportActivity extends AppCompatActivity {
     /**
      * Get content and delete intents for the {@link ReportActivity} that can be used to start it
      * and do cleanup.
-     *
+     * <p>
      * If {@link ReportInfo} size is too large, then a TransactionTooLargeException will be thrown
      * so its object may be saved to a file in the {@link Context#getCacheDir()}. Then when activity
      * starts, its read back and the file is deleted in {@link #onDestroy()}.
@@ -320,7 +324,7 @@ public class ReportActivity extends AppCompatActivity {
      * {@link #deleteReportInfoFilesOlderThanXDays(Context, int, boolean)} which should be called
      * incrementally or at app startup.
      *
-     * @param context The {@link Context} for operations.
+     * @param context    The {@link Context} for operations.
      * @param reportInfo The {@link ReportInfo} contain info that needs to be displayed.
      * @return Returns {@link NewInstanceResult}.
      */
@@ -340,10 +344,10 @@ public class ReportActivity extends AppCompatActivity {
             }
 
             return new NewInstanceResult(createContentIntent(context, null, reportInfoFilePath),
-                createDeleteIntent(context, reportInfoFilePath));
+                    createDeleteIntent(context, reportInfoFilePath));
         } else {
             return new NewInstanceResult(createContentIntent(context, reportInfo, null),
-                null);
+                    null);
         }
     }
 
@@ -381,9 +385,6 @@ public class ReportActivity extends AppCompatActivity {
     }
 
 
-
-
-
     @NotNull
     private static String getReportInfoDirectoryPath(Context context) {
         // Canonicalize to solve /data/data and /data/user/0 issues when comparing with reportInfoFilePath
@@ -396,7 +397,7 @@ public class ReportActivity extends AppCompatActivity {
         // Extra protection for mainly if someone set `exported="true"` for ReportActivityBroadcastReceiver
         String reportInfoDirectoryPath = getReportInfoDirectoryPath(context);
         reportInfoFilePath = FileUtils.getCanonicalPath(reportInfoFilePath, null);
-        if(!reportInfoFilePath.equals(reportInfoDirectoryPath) && reportInfoFilePath.startsWith(reportInfoDirectoryPath + "/")) {
+        if (!reportInfoFilePath.equals(reportInfoDirectoryPath) && reportInfoFilePath.startsWith(reportInfoDirectoryPath + "/")) {
             Logger.logVerbose(LOG_TAG, "Deleting " + ReportInfo.class.getSimpleName() + " serialized object file at path \"" + reportInfoFilePath + "\"");
             Error error = FileUtils.deleteRegularFile(ReportInfo.class.getSimpleName(), reportInfoFilePath, true);
             if (error != null) {
@@ -415,8 +416,8 @@ public class ReportActivity extends AppCompatActivity {
      * The {@link Context} object passed must be of the same package with which {@link #newInstance(Context, ReportInfo)}
      * was called since a call to {@link Context#getCacheDir()} is made.
      *
-     * @param context The {@link Context} for operations.
-     * @param days The x amount of days before which files should be deleted. This must be `>=0`.
+     * @param context       The {@link Context} for operations.
+     * @param days          The x amount of days before which files should be deleted. This must be `>=0`.
      * @param isSynchronous If set to {@code true}, then the command will be executed in the
      *                      caller thread and results returned synchronously.
      *                      If set to {@code false}, then a new thread is started run the commands
@@ -427,12 +428,14 @@ public class ReportActivity extends AppCompatActivity {
         if (isSynchronous) {
             return deleteReportInfoFilesOlderThanXDaysInner(context, days);
         } else {
-            new Thread() { public void run() {
-                Error error = deleteReportInfoFilesOlderThanXDaysInner(context, days);
-                if (error != null) {
-                    Logger.logErrorExtended(LOG_TAG, error.toString());
+            new Thread() {
+                public void run() {
+                    Error error = deleteReportInfoFilesOlderThanXDaysInner(context, days);
+                    if (error != null) {
+                        Logger.logErrorExtended(LOG_TAG, error.toString());
+                    }
                 }
-            }}.start();
+            }.start();
             return null;
         }
     }
