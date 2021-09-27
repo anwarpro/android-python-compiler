@@ -27,8 +27,8 @@ public interface ShellEnvironmentClient {
      * Build the shell environment to be used for commands.
      *
      * @param currentPackageContext The {@link Context} for the current package.
-     * @param isFailSafe If running a failsafe session.
-     * @param workingDirectory The working directory for the environment.
+     * @param isFailSafe            If running a failsafe session.
+     * @param workingDirectory      The working directory for the environment.
      * @return Should return the build environment.
      */
     @NonNull

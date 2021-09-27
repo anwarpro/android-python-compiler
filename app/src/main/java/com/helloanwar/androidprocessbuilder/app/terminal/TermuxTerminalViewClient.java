@@ -9,7 +9,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.net.Uri;
-import android.os.Environment;
 import android.text.TextUtils;
 import android.view.InputDevice;
 import android.view.KeyEvent;
@@ -23,14 +22,11 @@ import com.helloanwar.androidprocessbuilder.R;
 import com.helloanwar.androidprocessbuilder.app.TerminalActivity;
 import com.helloanwar.androidprocessbuilder.app.models.UserAction;
 import com.helloanwar.androidprocessbuilder.app.terminal.io.KeyboardShortcut;
-import com.termux.shared.activities.ReportActivity;
 import com.termux.shared.data.DataUtils;
 import com.termux.shared.data.UrlUtils;
-import com.termux.shared.file.FileUtils;
 import com.termux.shared.interact.MessageDialogUtils;
 import com.termux.shared.logger.Logger;
 import com.termux.shared.markdown.MarkdownUtils;
-import com.termux.shared.models.ReportInfo;
 import com.termux.shared.settings.properties.TermuxPropertyConstants;
 import com.termux.shared.shell.ShellUtils;
 import com.termux.shared.terminal.TermuxTerminalViewClientBase;
@@ -717,14 +713,6 @@ public class TermuxTerminalViewClient extends TermuxTerminalViewClientBase {
                 }
 
                 String userActionName = UserAction.REPORT_ISSUE_FROM_TRANSCRIPT.getName();
-                ReportActivity.startReportActivity(mActivity,
-                        new ReportInfo(userActionName,
-                                TermuxConstants.TERMUX_APP.TERMUX_ACTIVITY_NAME, title, null,
-                                reportString.toString(), "\n\n" + TermuxUtils.getReportIssueMarkdownString(mActivity),
-                                false,
-                                userActionName,
-                                Environment.getExternalStorageDirectory() + "/" +
-                                        FileUtils.sanitizeFileName(TermuxConstants.TERMUX_APP_NAME + "-" + userActionName + ".log", true, true)));
             }
         }.start();
     }

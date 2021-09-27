@@ -41,7 +41,6 @@ import com.helloanwar.androidprocessbuilder.app.terminal.TermuxTerminalSessionCl
 import com.helloanwar.androidprocessbuilder.app.terminal.TermuxTerminalViewClient;
 import com.helloanwar.androidprocessbuilder.app.terminal.io.TerminalToolbarViewPager;
 import com.helloanwar.androidprocessbuilder.app.utils.CrashUtils;
-import com.termux.shared.activities.ReportActivity;
 import com.termux.shared.logger.Logger;
 import com.termux.shared.packages.PermissionUtils;
 import com.termux.shared.settings.preferences.TermuxAppSharedPreferences;
@@ -176,9 +175,6 @@ public final class TerminalActivity extends Activity implements ServiceConnectio
         // Check if a crash happened on last run of the app and show a
         // notification with the crash details if it did
         CrashUtils.notifyAppCrashOnLastRun(this, LOG_TAG);
-
-        // Delete ReportInfo serialized object files from cache older than 14 days
-        ReportActivity.deleteReportInfoFilesOlderThanXDays(this, 14, false);
 
         // Load termux shared properties
         mProperties = new TermuxAppSharedProperties(this);

@@ -24,7 +24,6 @@ import androidx.annotation.Nullable;
 import com.helloanwar.androidprocessbuilder.R;
 import com.helloanwar.androidprocessbuilder.app.properties.TermuxAppSharedProperties;
 import com.helloanwar.androidprocessbuilder.app.terminal.TermuxTerminalSessionClient;
-import com.helloanwar.androidprocessbuilder.app.utils.PluginUtils;
 import com.termux.shared.data.DataUtils;
 import com.termux.shared.data.IntentUtils;
 import com.termux.shared.logger.Logger;
@@ -286,7 +285,7 @@ public final class TerminalService extends Service implements TermuxTask.TermuxT
             ExecutionCommand executionCommand = pendingPluginExecutionCommands.get(i);
             if (!executionCommand.shouldNotProcessResults() && executionCommand.isPluginExecutionCommandWithPendingResult()) {
                 if (executionCommand.setStateFailed(Errno.ERRNO_CANCELLED.getCode(), this.getString(com.termux.shared.R.string.error_execution_cancelled))) {
-                    PluginUtils.processPluginExecutionCommandResult(this, LOG_TAG, executionCommand);
+
                 }
             }
         }
@@ -455,9 +454,9 @@ public final class TerminalService extends Service implements TermuxTask.TermuxT
         if (newTermuxTask == null) {
             Logger.logError(LOG_TAG, "Failed to execute new TermuxTask command for:\n" + executionCommand.getCommandIdAndLabelLogString());
             // If the execution command was started for a plugin, then process the error
-            if (executionCommand.isPluginExecutionCommand)
-                PluginUtils.processPluginExecutionCommandError(this, LOG_TAG, executionCommand, false);
-            else
+            if (executionCommand.isPluginExecutionCommand) {
+
+            } else
                 Logger.logErrorExtended(LOG_TAG, executionCommand.toString());
             return null;
         }
@@ -486,8 +485,9 @@ public final class TerminalService extends Service implements TermuxTask.TermuxT
                 Logger.logVerbose(LOG_TAG, "The onTermuxTaskExited() callback called for \"" + executionCommand.getCommandIdAndLabelLogString() + "\" TermuxTask command");
 
                 // If the execution command was started for a plugin, then process the results
-                if (executionCommand != null && executionCommand.isPluginExecutionCommand)
-                    PluginUtils.processPluginExecutionCommandResult(this, LOG_TAG, executionCommand);
+                if (executionCommand != null && executionCommand.isPluginExecutionCommand) {
+
+                }
 
                 mTermuxTasks.remove(termuxTask);
             }
@@ -554,9 +554,9 @@ public final class TerminalService extends Service implements TermuxTask.TermuxT
         if (newTermuxSession == null) {
             Logger.logError(LOG_TAG, "Failed to execute new TermuxSession command for:\n" + executionCommand.getCommandIdAndLabelLogString());
             // If the execution command was started for a plugin, then process the error
-            if (executionCommand.isPluginExecutionCommand)
-                PluginUtils.processPluginExecutionCommandError(this, LOG_TAG, executionCommand, false);
-            else
+            if (executionCommand.isPluginExecutionCommand) {
+
+            } else
                 Logger.logErrorExtended(LOG_TAG, executionCommand.toString());
             return null;
         }
@@ -602,8 +602,9 @@ public final class TerminalService extends Service implements TermuxTask.TermuxT
             Logger.logVerbose(LOG_TAG, "The onTermuxSessionExited() callback called for \"" + executionCommand.getCommandIdAndLabelLogString() + "\" TermuxSession command");
 
             // If the execution command was started for a plugin, then process the results
-            if (executionCommand != null && executionCommand.isPluginExecutionCommand)
-                PluginUtils.processPluginExecutionCommandResult(this, LOG_TAG, executionCommand);
+            if (executionCommand != null && executionCommand.isPluginExecutionCommand) {
+
+            }
 
             mTermuxSessions.remove(termuxSession);
 

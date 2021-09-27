@@ -4,17 +4,14 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
-import android.os.Environment;
 
 import androidx.annotation.Nullable;
 
 import com.helloanwar.androidprocessbuilder.R;
 import com.helloanwar.androidprocessbuilder.app.models.UserAction;
-import com.termux.shared.activities.ReportActivity;
 import com.termux.shared.data.DataUtils;
 import com.termux.shared.file.FileUtils;
 import com.termux.shared.logger.Logger;
-import com.termux.shared.models.ReportInfo;
 import com.termux.shared.models.errors.Error;
 import com.termux.shared.notification.NotificationUtils;
 import com.termux.shared.notification.TermuxNotificationUtils;
@@ -131,35 +128,12 @@ public class CrashUtils {
         }
 
         String userActionName = UserAction.CRASH_REPORT.getName();
-        ReportActivity.NewInstanceResult result = ReportActivity.newInstance(context, new ReportInfo(userActionName,
-                logTag, title, null, reportString.toString(),
-                "\n\n" + TermuxUtils.getReportIssueMarkdownString(context), true,
-                userActionName,
-                Environment.getExternalStorageDirectory() + "/" +
-                        FileUtils.sanitizeFileName(TermuxConstants.TERMUX_APP_NAME + "-" + userActionName + ".log", true, true)));
-        if (result.contentIntent == null) return;
 
         // Must ensure result code for PendingIntents and id for notification are unique otherwise will override previous
         int nextNotificationId = TermuxNotificationUtils.getNextNotificationId(context);
 
-        PendingIntent contentIntent = PendingIntent.getActivity(context, nextNotificationId, result.contentIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        PendingIntent deleteIntent = null;
-        if (result.deleteIntent != null)
-            deleteIntent = PendingIntent.getBroadcast(context, nextNotificationId, result.deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
         // Setup the notification channel if not already set up
         setupCrashReportsNotificationChannel(context);
-
-        // Build the notification
-        Notification.Builder builder = getCrashReportsNotificationBuilder(context, title, null,
-                null, contentIntent, deleteIntent, NotificationUtils.NOTIFICATION_MODE_VIBRATE);
-        if (builder == null) return;
-
-        // Send the notification
-        NotificationManager notificationManager = NotificationUtils.getNotificationManager(context);
-        if (notificationManager != null)
-            notificationManager.notify(nextNotificationId, builder.build());
     }
 
     /**
