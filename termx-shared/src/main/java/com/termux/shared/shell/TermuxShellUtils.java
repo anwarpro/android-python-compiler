@@ -28,6 +28,26 @@ public class TermuxShellUtils {
         return TermuxConstants.TERMUX_BIN_PREFIX_DIR_PATH;
     }
 
+    public static String getAppRoot(Context context) {
+        return context.getFilesDir().getAbsolutePath() + "/app";
+    }
+
+    public static String getEntryPoint(String search_dir) {
+        /* Get the main file (.pyc|.pyo|.py) depending on if we
+         * have a compiled version or not.
+         */
+        List<String> entryPoints = new ArrayList<String>();
+        entryPoints.add("main.pyo");  // python 2 compiled files
+        entryPoints.add("main.pyc");  // python 3 compiled files
+        for (String value : entryPoints) {
+            File mainFile = new File(search_dir + "/" + value);
+            if (mainFile.exists()) {
+                return value;
+            }
+        }
+        return "main.py";
+    }
+
     public static String[] buildEnvironment(Context currentPackageContext, boolean isFailSafe, String workingDirectory) {
         TermuxConstants.TERMUX_HOME_DIR.mkdirs();
 
@@ -44,10 +64,24 @@ public class TermuxShellUtils {
                 environment.add("TERMUX_VERSION=" + termuxVersionName);
         }
 
+        String app_root_dir = getAppRoot(currentPackageContext);
+        String entry_point = getEntryPoint(app_root_dir);
+
         environment.add("TERM=xterm-256color");
         environment.add("COLORTERM=truecolor");
-        environment.add("HOME=" + TermuxConstants.TERMUX_HOME_DIR_PATH);
-        environment.add("PREFIX=" + TermuxConstants.TERMUX_PREFIX_DIR_PATH);
+        environment.add("HOME=" + app_root_dir);
+        environment.add("PREFIX=" + app_root_dir);
+
+        environment.add("PYTHONHOME=" + app_root_dir);
+        environment.add("PYTHONPATH=" + app_root_dir + ":" + app_root_dir + "/lib");
+        environment.add("PYTHONOPTIMIZE=2");
+        environment.add("ANDROID_ARGUMENT=" + app_root_dir);
+        environment.add("ANDROID_ENTRYPOINT=" + entry_point);
+        environment.add("ANDROID_APP_PATH=" + app_root_dir);
+        //python interpreter configs
+        environment.add("EXEPATH=" + currentPackageContext.getApplicationInfo().nativeLibraryDir + "/libpython3.8.so");
+        environment.add("LD_LIBRARY_PATH=" + currentPackageContext.getApplicationInfo().nativeLibraryDir);
+
         environment.add("BOOTCLASSPATH=" + System.getenv("BOOTCLASSPATH"));
         environment.add("ANDROID_ROOT=" + System.getenv("ANDROID_ROOT"));
         environment.add("ANDROID_DATA=" + System.getenv("ANDROID_DATA"));
@@ -137,7 +171,7 @@ public class TermuxShellUtils {
     }
 
     public static void clearTermuxTMPDIR(boolean onlyIfExists) {
-        if(onlyIfExists && !FileUtils.directoryFileExists(TermuxConstants.TERMUX_TMP_PREFIX_DIR_PATH, false))
+        if (onlyIfExists && !FileUtils.directoryFileExists(TermuxConstants.TERMUX_TMP_PREFIX_DIR_PATH, false))
             return;
 
         Error error;

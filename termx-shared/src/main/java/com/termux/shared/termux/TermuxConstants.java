@@ -340,24 +340,6 @@ public final class TermuxConstants {
     public static final String TERMUX_WIDGET_GITHUB_REPO_URL = TERMUX_GITHUB_ORGANIZATION_URL + "/" + TERMUX_WIDGET_GITHUB_REPO_NAME; // Default: "https://github.com/termux/termux-widget"
     /** Termux Widget Github issues repo url */
     public static final String TERMUX_WIDGET_GITHUB_ISSUES_REPO_URL = TERMUX_WIDGET_GITHUB_REPO_URL + "/issues"; // Default: "https://github.com/termux/termux-widget/issues"
-    /** Termux Widget F-Droid package url */
-    public static final String TERMUX_WIDGET_FDROID_PACKAGE_URL = FDROID_PACKAGES_BASE_URL + "/" + TERMUX_WIDGET_PACKAGE_NAME; // Default: "https://f-droid.org/en/packages/com.termux.widget"
-
-
-
-
-
-    /*
-     * Termux plugin apps lists.
-     */
-
-    public static final List<String> TERMUX_PLUGIN_APP_NAMES_LIST = Arrays.asList(
-        TERMUX_API_APP_NAME,
-        TERMUX_BOOT_APP_NAME,
-        TERMUX_FLOAT_APP_NAME,
-        TERMUX_STYLING_APP_NAME,
-        TERMUX_TASKER_APP_NAME,
-        TERMUX_WIDGET_APP_NAME);
 
     public static final List<String> TERMUX_PLUGIN_APP_PACKAGE_NAMES_LIST = Arrays.asList(
         TERMUX_API_PACKAGE_NAME,
@@ -481,12 +463,6 @@ public final class TermuxConstants {
 
     /** Termux Reddit subreddit url */
     public static final String TERMUX_REDDIT_SUBREDDIT_URL = "https://www.reddit.com/r/termux"; // Default: "https://www.reddit.com/r/termux"
-
-
-    /** Termux donate url */
-    public static final String TERMUX_DONATE_URL = TERMUX_PACKAGES_GITHUB_REPO_URL + "/wiki/Donate"; // Default: "https://github.com/termux/termux-packages/wiki/Donate"
-
-
 
 
 

@@ -17,6 +17,9 @@
     <string name="shared_user_label">&TERMUX_APP_NAME; user</string>
 
 
+    <string name="private_version">6c9591c7f33873cf00472f4fc604d9ea3377c451</string>
+    <string name="presplash_color">#000000</string>
+    <string name="urlScheme">kivy</string>
 
     <!-- Termux RUN_COMMAND permission -->
     <string name="permission_run_command_label">Run commands in &TERMUX_APP_NAME; environment</string>
